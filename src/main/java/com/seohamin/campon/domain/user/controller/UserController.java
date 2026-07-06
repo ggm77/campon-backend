@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -38,9 +36,12 @@ public class UserController {
 
     // 유저 탈퇴 API
     @DeleteMapping("/users")
-    public ResponseEntity<Void> deleteUser() {
+    public ResponseEntity<Void> deleteUser(
+            @AuthenticationPrincipal final String userIdStr
+    ) {
 
-        // mock
+        userService.deleteUser(userIdStr);
+
         return ResponseEntity.noContent().build();
     }
 }

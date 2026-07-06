@@ -84,6 +84,24 @@ public class UserService {
     }
 
     /**
+     * 유저 탈퇴 메서드
+     * @param userIdStr 탈퇴 유저 아이디 문자열
+     */
+    @Transactional
+    public void deleteUser(final String userIdStr) {
+        // 1) null 검사
+        if (userIdStr == null || userIdStr.isBlank()) {
+            throw new CustomException(ExceptionCode.INVALID_REQUEST);
+        }
+
+        // 2) 유저 아이디 파싱
+        final Long userId = Long.valueOf(userIdStr);
+
+        // 3) 유저 삭제
+        userRepository.deleteById(userId);
+    }
+
+    /**
      * String 리스트로 들어온걸 Enum 리스트로 변환하는 메서드
      * @param list 변환할 리스트
      * @param clazz 변환할 Enum 클래스
