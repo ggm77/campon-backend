@@ -29,12 +29,6 @@ public class OauthController {
             @RequestBody final OauthRequestDto oauthRequestDto
     ) {
 
-        // mock
-        return ResponseEntity.ok(new JwtDto(
-                "test",
-                "Bearer",
-                1L,
-                "test"
-        ));
+        return ResponseEntity.ok(oauthService.processGoogleOauth(oauthRequestDto));
     }
 }
