@@ -79,4 +79,8 @@ public class UserOauth {
         this.profileImage = profileImage;
         this.refreshToken = refreshToken;
     }
+
+    public void updateRefreshToken(final String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

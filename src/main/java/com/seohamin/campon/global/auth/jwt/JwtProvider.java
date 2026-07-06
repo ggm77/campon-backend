@@ -1,4 +1,4 @@
-package com.seohamin.campon.global.jwt;
+package com.seohamin.campon.global.auth.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,8 +40,8 @@ public class JwtProvider {
         return "Bearer";
     }
 
-    public Integer getAccessTokenExpirationTime() {
-        return ACCESS_TOKEN_EXPIRATION_TIME;
+    public Long getAccessTokenExpirationTime() {
+        return ACCESS_TOKEN_EXPIRATION_TIME.longValue();
     }
 
     /**

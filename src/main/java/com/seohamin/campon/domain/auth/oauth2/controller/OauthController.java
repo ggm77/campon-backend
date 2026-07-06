@@ -1,6 +1,7 @@
 package com.seohamin.campon.domain.auth.oauth2.controller;
 
 import com.seohamin.campon.domain.auth.oauth2.dto.OauthRequestDto;
+import com.seohamin.campon.domain.auth.oauth2.service.OauthService;
 import com.seohamin.campon.global.dto.JwtDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,19 +12,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")
 public class OauthController {
 
+    private final OauthService oauthService;
+
     // 애플 OAuth API
     @PostMapping("/oauth2/apple")
     public ResponseEntity<JwtDto> appleOauth2(
             @RequestBody final OauthRequestDto oauthRequestDto
     ) {
 
-        // mock
-        return ResponseEntity.ok(new JwtDto(
-                "test",
-                "Bearer",
-                1L,
-                "test"
-        ));
+        return ResponseEntity.ok(oauthService.processAppleOauth(oauthRequestDto));
     }
 
     // 구글 OAuth API

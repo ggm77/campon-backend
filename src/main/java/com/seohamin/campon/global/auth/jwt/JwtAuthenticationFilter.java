@@ -1,4 +1,4 @@
-package com.seohamin.campon.global.jwt;
+package com.seohamin.campon.global.auth.jwt;
 
 import com.seohamin.campon.global.exception.CustomException;
 import io.jsonwebtoken.Claims;

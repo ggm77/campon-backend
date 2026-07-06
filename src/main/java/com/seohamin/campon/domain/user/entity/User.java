@@ -2,6 +2,7 @@ package com.seohamin.campon.domain.user.entity;
 
 import com.seohamin.campon.global.constant.Equipment;
 import com.seohamin.campon.global.constant.Facility;
+import com.seohamin.campon.global.constant.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -32,6 +33,12 @@ public class User {
     // 연결된 OAuth2
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserOauth> userOauths = new ArrayList<>();
+
+    // 유저 Role
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @NotNull
+    private Role role;
 
     // 차량 보유 여부
     @Column(nullable = false)
@@ -68,10 +75,12 @@ public class User {
 
     @Builder
     public User(
+            final Role role,
             final Boolean hasCar,
             final Set<Facility> preferredConditions,
             final Set<Equipment> equipments
     ) {
+        this.role = role;
         this.hasCar = hasCar;
         this.preferredConditions = preferredConditions;
         this.equipments = equipments;
