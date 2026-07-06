@@ -1,6 +1,6 @@
 package com.seohamin.campon.global.auth.apple.dto.auth;
 
-import com.treasurehunter.treasurehunter.domain.user.entity.Role;
+import com.seohamin.campon.global.constant.Role;
 import lombok.Builder;
 import lombok.Getter;
 

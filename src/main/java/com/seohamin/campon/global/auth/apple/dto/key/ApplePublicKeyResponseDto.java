@@ -1,7 +1,7 @@
 package com.seohamin.campon.global.auth.apple.dto.key;
 
-import com.treasurehunter.treasurehunter.global.exception.CustomException;
-import com.treasurehunter.treasurehunter.global.exception.constants.ExceptionCode;
+import com.seohamin.campon.global.exception.CustomException;
+import com.seohamin.campon.global.exception.constants.ExceptionCode;
 import lombok.Getter;
 
 import java.util.List;
