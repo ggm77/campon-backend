@@ -7,6 +7,6 @@ import java.util.List;
 
 public record UserRequestDto(
         Boolean hasCar,
-        List<Facility> preferredConditions,
-        List<Equipment> equipment
+        List<String> preferredConditions,
+        List<String> equipment
 ) { }
