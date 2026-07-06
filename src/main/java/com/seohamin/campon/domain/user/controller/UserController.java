@@ -29,16 +29,11 @@ public class UserController {
 
     // 유저 정보 조회 API
     @GetMapping("/users")
-    public ResponseEntity<UserResponseDto> getUser() {
+    public ResponseEntity<UserResponseDto> getUser(
+            @AuthenticationPrincipal final String userIdStr
+    ) {
 
-        // mock
-        return ResponseEntity.ok(
-                new UserResponseDto(
-                        true,
-                        new ArrayList<>(),
-                        new ArrayList<>()
-                )
-        );
+        return ResponseEntity.ok(userService.getUser(userIdStr));
     }
 
     // 유저 탈퇴 API
