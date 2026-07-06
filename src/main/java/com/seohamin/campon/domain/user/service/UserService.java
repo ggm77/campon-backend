@@ -27,9 +27,12 @@ public class UserService {
      * @return upsert된 유저 정보
      */
     @Transactional
-    public UserResponseDto upsertUser(final UserRequestDto userRequestDto) {
+    public UserResponseDto upsertUser(
+            final String userIdStr,
+            final UserRequestDto userRequestDto
+    ) {
         // 1) null 검사
-        if (userRequestDto == null) {
+        if (userRequestDto == null || userIdStr == null ||  userIdStr.isBlank()) {
             throw new CustomException(ExceptionCode.INVALID_REQUEST);
         }
         if (
@@ -39,22 +42,23 @@ public class UserService {
             throw new CustomException(ExceptionCode.INVALID_REQUEST);
         }
 
-        // 2) List<String>을 Set<Enum>으로 변환
+        // 2) 유저 아이디 파싱
+        final Long userId = Long.valueOf(userIdStr);
+
+        // 3) 유저 조회
+        final User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+
+        // 4) List<String>을 Set<Enum>으로 변환
         final Set<Facility> facilitySet = new HashSet<>(toEnumList(userRequestDto.preferredConditions(), Facility.class));
         final Set<Equipment> equipmentSet = new HashSet<>(toEnumList(userRequestDto.equipment(), Equipment.class));
 
+        // 5) 정보 put
+        user.updateHasCar(userRequestDto.hasCar());
+        user.updatePreferredConditions(facilitySet);
+        user.updateEquipments(equipmentSet);
 
-        // 3) 유저 엔티티 생성
-        final User user = User.builder()
-                .hasCar(userRequestDto.hasCar())
-                .preferredConditions(facilitySet)
-                .equipments(equipmentSet)
-                .build();
-
-        // 4) 유저 저장
-        final User savedUser = userRepository.save(user);
-
-        return UserResponseDto.of(savedUser);
+        return UserResponseDto.of(user);
     }
 
     /**

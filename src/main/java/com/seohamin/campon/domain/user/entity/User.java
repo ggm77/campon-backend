@@ -85,4 +85,16 @@ public class User {
         this.preferredConditions = preferredConditions;
         this.equipments = equipments;
     }
+
+    public void updateHasCar(final Boolean hasCar) {
+        this.hasCar = hasCar;
+    }
+
+    public void updatePreferredConditions(final Set<Facility> preferredConditions) {
+        this.preferredConditions = preferredConditions;
+    }
+
+    public void updateEquipments(final Set<Equipment> equipments) {
+        this.equipments = equipments;
+    }
 }
