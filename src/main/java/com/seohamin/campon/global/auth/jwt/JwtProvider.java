@@ -6,7 +6,6 @@ import com.seohamin.campon.global.constant.Role;
 import com.seohamin.campon.global.exception.CustomException;
 import com.seohamin.campon.global.exception.constants.ExceptionCode;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -23,6 +22,10 @@ import java.util.*;
 
 @Component
 public class JwtProvider {
+
+    private static final String TOKEN_TYPE_CLAIM = "tokenType";
+    private static final String ACCESS_TOKEN_TYPE = "access";
+    private static final String REFRESH_TOKEN_TYPE = "refresh";
 
     @Value("${jwt.secret}")
     private String SECRET_KEY;
@@ -63,6 +66,7 @@ public class JwtProvider {
                 .and()
                 .subject(userIdStr)
                 .claim("authorities", List.of(role.getKey()))
+                .claim(TOKEN_TYPE_CLAIM, ACCESS_TOKEN_TYPE)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(exp))
                 .signWith(key)
@@ -87,6 +91,7 @@ public class JwtProvider {
                 .type("JWT")
                 .and()
                 .subject(userIdStr)
+                .claim(TOKEN_TYPE_CLAIM, REFRESH_TOKEN_TYPE)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(exp))
                 .signWith(key)
@@ -118,27 +123,21 @@ public class JwtProvider {
     }
 
     /**
-     * JWT를 검증하는 메서드
+     * 리프레시 토큰을 검증하는 메서드
+     * 리프레시 토큰이 아니면(액세스 토큰 등) 예외를 던짐
      * 문자열이 된 유저의 고유 아이디 번호를 리턴함
-     * 검증 실패시 io.jsonwebtoken.JwtException 예외 던짐
-     * @param jwt JWT
+     * @param jwt 리프레시 토큰
      * @return 문자열이 된 유저 아이디
      */
-    public String getPayload(final String jwt){
+    public String getRefreshTokenSubject(final String jwt){
 
-        final SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
+        final Claims claims = getClaims(jwt);
 
-        try {
-            final Jws<Claims> claimsJws =
-                    Jwts.parser()
-                            .verifyWith(key)
-                            .build()
-                            .parseSignedClaims(jwt);
-
-            return claimsJws.getPayload().getSubject();
-        } catch (JwtException ex) {
+        if (!REFRESH_TOKEN_TYPE.equals(claims.get(TOKEN_TYPE_CLAIM, String.class))) {
             throw new CustomException(ExceptionCode.INVALID_TOKEN);
         }
+
+        return claims.getSubject();
     }
 
     /**

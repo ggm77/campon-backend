@@ -1,6 +1,7 @@
 package com.seohamin.campon.domain.auth.token.controller;
 
 import com.seohamin.campon.domain.auth.token.dto.TokenRefreshRequestDto;
+import com.seohamin.campon.domain.auth.token.service.TokenService;
 import com.seohamin.campon.global.dto.JwtDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,17 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth")
 public class TokenController {
 
+    private final TokenService tokenService;
+
     @PostMapping("/token/refresh")
     public ResponseEntity<JwtDto> refreshToken(
             @RequestBody final TokenRefreshRequestDto tokenRefreshRequestDto
     ) {
 
-        // mock
-        return ResponseEntity.ok(new JwtDto(
-                "test",
-                "Bearer",
-                123L,
-                "test"
-        ));
+        return ResponseEntity.ok(tokenService.tokenRefresh(tokenRefreshRequestDto));
     }
 }
