@@ -11,10 +11,20 @@ public class WebClientConfig {
     @Value("${oauth2.apple.auth_base_url}")
     private String APPLE_AUTH_BASE_URL;
 
+    @Value("${tour_api.base_url}")
+    private String TOUR_API_BASE_URL;
+
     @Bean
     public WebClient appleWebClient() {
         return WebClient.builder()
                 .baseUrl(APPLE_AUTH_BASE_URL)
+                .build();
+    }
+
+    @Bean
+    public WebClient tourApiWebClient() {
+        return WebClient.builder()
+                .baseUrl(TOUR_API_BASE_URL)
                 .build();
     }
 }
