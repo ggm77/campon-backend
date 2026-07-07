@@ -2,6 +2,7 @@ package com.seohamin.campon.domain.campsite.controller;
 
 import com.seohamin.campon.domain.campsite.dto.CampsiteNearbyResponseDto;
 import com.seohamin.campon.domain.campsite.dto.CampsiteRecommendResponseDto;
+import com.seohamin.campon.domain.campsite.service.CampsiteService;
 import com.seohamin.campon.global.dto.PageNationDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class CampsiteController {
 
+    private final CampsiteService campsiteService;
+
     // 주변 캠핑장 조회 API
     @GetMapping("/campsites/nearby")
     public ResponseEntity<PageNationDto<CampsiteNearbyResponseDto>> getCampsiteNearby(
@@ -29,32 +32,7 @@ public class CampsiteController {
             @RequestParam final Integer page
     ) {
 
-        // mock
-        return ResponseEntity.ok().body(
-                new PageNationDto<CampsiteNearbyResponseDto>(
-                        false,
-                        List.of(new CampsiteNearbyResponseDto(
-                                1L,
-                                "test",
-                                "test",
-                                "test",
-                                1.23,
-                                1.23,
-                                1,
-                                "test",
-                                "test",
-                                "test",
-                                new ArrayList<>(),
-                                "test",
-                                false,
-                                false,
-                                1,
-                                1,
-                                1,
-                                new ArrayList<>()
-                        ))
-                )
-        );
+        return ResponseEntity.ok(campsiteService.getCampsiteNearby(lat, lon, radius, size, page));
     }
 
     // 캠핑장 추천 API
