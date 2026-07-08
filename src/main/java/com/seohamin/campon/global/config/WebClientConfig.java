@@ -14,6 +14,9 @@ public class WebClientConfig {
     @Value("${tour_api.base_url}")
     private String TOUR_API_BASE_URL;
 
+    @Value("${gemini.api.base_url}")
+    private String GEMINI_API_BASE_URL;
+
     @Bean
     public WebClient appleWebClient() {
         return WebClient.builder()
@@ -25,6 +28,13 @@ public class WebClientConfig {
     public WebClient tourApiWebClient() {
         return WebClient.builder()
                 .baseUrl(TOUR_API_BASE_URL)
+                .build();
+    }
+
+    @Bean
+    public WebClient geminiApiWebClient() {
+        return WebClient.builder()
+                .baseUrl(GEMINI_API_BASE_URL)
                 .build();
     }
 }
