@@ -71,6 +71,7 @@ public class UserOauthService {
                     UserOauth.builder()
                             .user(savedUser)
                             .provider(userOauthAccountsRequestDto.provider())
+                            .providerUserId(userOauthAccountsRequestDto.providerUserId())
                             .email(userOauthAccountsRequestDto.email())
                             .name(userOauthAccountsRequestDto.name())
                             .profileImage(userOauthAccountsRequestDto.profileImage())

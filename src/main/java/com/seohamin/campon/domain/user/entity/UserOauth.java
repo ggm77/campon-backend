@@ -67,6 +67,7 @@ public class UserOauth {
     public UserOauth(
             final User user,
             final String provider,
+            final String providerUserId,
             final String email,
             final String name,
             final String profileImage,
@@ -74,6 +75,7 @@ public class UserOauth {
     ) {
         this.member = user;
         this.provider = provider;
+        this.providerUserId = providerUserId;
         this.email = email;
         this.name = name;
         this.profileImage = profileImage;
