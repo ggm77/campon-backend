@@ -17,10 +17,30 @@ public class WebClientConfig {
     @Value("${gemini.api.base_url}")
     private String GEMINI_API_BASE_URL;
 
+    @Value("${oauth2.kakao.auth_base_url}")
+    private String KAKAO_AUTH_BASE_URL;
+
+    @Value("${oauth2.kakao.api_base_url}")
+    private String KAKAO_API_BASE_URL;
+
     @Bean
     public WebClient appleWebClient() {
         return WebClient.builder()
                 .baseUrl(APPLE_AUTH_BASE_URL)
+                .build();
+    }
+
+    @Bean
+    public WebClient kakaoAuthWebClient() {
+        return WebClient.builder()
+                .baseUrl(KAKAO_AUTH_BASE_URL)
+                .build();
+    }
+
+    @Bean
+    public WebClient kakaoApiWebClient() {
+        return WebClient.builder()
+                .baseUrl(KAKAO_API_BASE_URL)
                 .build();
     }
 

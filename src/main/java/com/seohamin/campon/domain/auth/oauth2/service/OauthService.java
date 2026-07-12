@@ -13,6 +13,9 @@ import com.seohamin.campon.global.auth.apple.client.AppleAuthClient;
 import com.seohamin.campon.global.auth.apple.dto.key.ApplePublicKeyResponseDto;
 import com.seohamin.campon.global.auth.apple.dto.token.AppleTokenResponseDto;
 import com.seohamin.campon.global.auth.apple.util.AppleKeyGenerator;
+import com.seohamin.campon.global.auth.kakao.client.KakaoAuthClient;
+import com.seohamin.campon.global.auth.kakao.dto.token.KakaoTokenResponseDto;
+import com.seohamin.campon.global.auth.kakao.dto.user.KakaoUserInfoResponseDto;
 import com.seohamin.campon.global.auth.jwt.JwtProvider;
 import com.seohamin.campon.global.constant.Role;
 import com.seohamin.campon.global.dto.JwtDto;
@@ -39,6 +42,7 @@ public class OauthService {
 
     private final AppleKeyGenerator appleKeyGenerator;
     private final AppleAuthClient appleAuthClient;
+    private final KakaoAuthClient kakaoAuthClient;
     private final JwtProvider jwtProvider;
     private final UserOauthService userOauthService;
 
@@ -154,6 +158,59 @@ public class OauthService {
                 (String) payload.get("name"),
                 (String) payload.get("picture"),
                 googleRefreshToken
+        );
+
+        // 7) 유저 로그인 또는 회원가입
+        return upsertUser(userOauthAccountsRequestDto);
+    }
+
+    /**
+     * 카카오 OAuth2 진행하는 메서드
+     * @param oauthRequestDto auth code 담긴 DTO
+     * @return JWT
+     */
+    public JwtDto processKakaoOauth(final OauthRequestDto oauthRequestDto) {
+        // 1) null 검사
+        if (
+                oauthRequestDto == null || oauthRequestDto.code() == null || oauthRequestDto.code().isBlank()
+        ) {
+            throw new CustomException(ExceptionCode.INVALID_REQUEST);
+        }
+
+        // 2) code 추출
+        final String code = oauthRequestDto.code();
+
+        // 3) code를 통해 카카오에서 토큰과 유저 정보 조회
+        final KakaoTokenResponseDto tokenResponse;
+        final KakaoUserInfoResponseDto userInfoResponse;
+        try {
+            tokenResponse = kakaoAuthClient.requestToken(code);
+            userInfoResponse = kakaoAuthClient.requestUserInfo(tokenResponse.getAccess_token());
+        } catch (RuntimeException ex) {
+            throw new CustomException(ExceptionCode.KAKAO_REQUEST_ERROR);
+        }
+
+        // 4) 리프레시 토큰 변수에 저장
+        final String kakaoRefreshToken = tokenResponse.getRefresh_token();
+
+        // 5) 유저 정보에서 이메일, 닉네임, 프로필 이미지 추출
+        final KakaoUserInfoResponseDto.KakaoAccountDto kakaoAccount = userInfoResponse.getKakao_account();
+        final String email = kakaoAccount != null ? kakaoAccount.getEmail() : null;
+        final String nickname = kakaoAccount != null && kakaoAccount.getProfile() != null
+                ? kakaoAccount.getProfile().getNickname()
+                : null;
+        final String profileImage = kakaoAccount != null && kakaoAccount.getProfile() != null
+                ? kakaoAccount.getProfile().getProfile_image_url()
+                : null;
+
+        // 6) 유저 정보 담긴 DTO 생성
+        final UserOauthAccountsRequestDto userOauthAccountsRequestDto = new UserOauthAccountsRequestDto(
+                "kakao",
+                String.valueOf(userInfoResponse.getId()),
+                email,
+                nickname,
+                profileImage,
+                kakaoRefreshToken
         );
 
         // 7) 유저 로그인 또는 회원가입

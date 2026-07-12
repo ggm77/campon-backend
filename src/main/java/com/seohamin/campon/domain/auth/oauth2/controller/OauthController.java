@@ -31,4 +31,13 @@ public class OauthController {
 
         return ResponseEntity.ok(oauthService.processGoogleOauth(oauthRequestDto));
     }
+
+    // 카카오 OAuth API
+    @PostMapping("/oauth2/kakao")
+    public ResponseEntity<JwtDto> kakaoOauth2(
+            @RequestBody final OauthRequestDto oauthRequestDto
+    ) {
+
+        return ResponseEntity.ok(oauthService.processKakaoOauth(oauthRequestDto));
+    }
 }

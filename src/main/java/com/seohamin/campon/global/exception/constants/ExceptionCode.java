@@ -29,6 +29,7 @@ public enum ExceptionCode {
     ATTEMPT_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "시도 가능한 횟수를 초과했습니다."),
 
     GOOGLE_REQUEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "구글과 통신 중 오류가 발생했습니다."),
+    KAKAO_REQUEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "카카오와 통신 중 오류가 발생했습니다."),
     SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "현재 서버를 이용할 수 없습니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 오류가 발생했습니다.")
     ;
