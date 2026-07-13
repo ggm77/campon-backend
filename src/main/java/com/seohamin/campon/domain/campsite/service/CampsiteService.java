@@ -6,17 +6,16 @@ import com.seohamin.campon.global.exception.CustomException;
 import com.seohamin.campon.global.exception.constants.ExceptionCode;
 import com.seohamin.campon.global.infra.tourApi.TourApiClient;
 import com.seohamin.campon.global.infra.tourApi.dto.NearbyApiResponseDto;
+import com.seohamin.campon.global.util.GeoUtil;
+import com.seohamin.campon.global.util.ParseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CampsiteService {
-
-    private static final double EARTH_RADIUS_METERS = 6_371_000;
 
     private final TourApiClient tourApiClient;
 
@@ -84,8 +83,8 @@ public class CampsiteService {
             final double lon
     ) {
         // 1) 아이템의 위도 경도 정보를 파싱 (정보 없으면 null)
-        final Double itemLat = parseDouble(item.mapY());
-        final Double itemLon = parseDouble(item.mapX());
+        final Double itemLat = ParseUtil.parseDoubleOrNull(item.mapY());
+        final Double itemLon = ParseUtil.parseDoubleOrNull(item.mapX());
 
         return new CampsiteNearbyResponseDto(
                 Long.parseLong(item.contentId()),
@@ -94,66 +93,19 @@ public class CampsiteService {
                 item.intro(),
                 itemLat,
                 itemLon,
-                calculateDistance(lat, lon, itemLat, itemLon), // 거리 계산
+                GeoUtil.calculateDistance(lat, lon, itemLat, itemLon), // 거리 계산
                 item.zipcode(),
                 item.tel(),
                 item.resveUrl(),
-                splitCsv(item.sbrsCl()), // 문자열을 리스트로 변환
+                ParseUtil.splitCsv(item.sbrsCl()), // 문자열을 리스트로 변환
                 item.firstImageUrl(),
                 "Y".equals(item.trlerAcmpnyAt()),
                 "Y".equals(item.caravAcmpnyAt()),
-                parseInt(item.toiletCo()),
-                parseInt(item.swrmCo()),
-                parseInt(item.wtrplCo()),
-                splitCsv(item.eqpmnLendCl()) // 문자열을 리스트로 변환
+                ParseUtil.parseIntOrZero(item.toiletCo()),
+                ParseUtil.parseIntOrZero(item.swrmCo()),
+                ParseUtil.parseIntOrZero(item.wtrplCo()),
+                ParseUtil.splitCsv(item.eqpmnLendCl()) // 문자열을 리스트로 변환
         );
-    }
-
-    // 위도 경도로 거리 계산하는 메서드
-    private Integer calculateDistance(
-            final Double lat1,
-            final Double lon1,
-            final Double lat2,
-            final Double lon2
-    ) {
-        // 1) 위도 경도 정보 하나라도 없으면 null 반환
-        if (lat1 == null || lon1 == null || lat2 == null || lon2 == null) {
-            return null;
-        }
-
-        // 2) 거리 계산
-        final double dLat = Math.toRadians(lat2 - lat1);
-        final double dLon = Math.toRadians(lon2 - lon1);
-        final double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        final double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return (int) Math.round(EARTH_RADIUS_METERS * c);
-    }
-
-    // 쉼표가 구분자인 문자열을 리스트로 변환하는 메서드
-    private List<String> splitCsv(final String value) {
-        if (value == null || value.isBlank()) {
-            return List.of();
-        }
-        return Arrays.stream(value.split(","))
-                .map(String::trim)
-                .filter(token -> !token.isEmpty())
-                .toList();
-    }
-
-    private Integer parseInt(final String value) {
-        if (value == null || value.isBlank()) {
-            return 0;
-        }
-        return Integer.parseInt(value.trim());
-    }
-
-    private Double parseDouble(final String value) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-        return Double.parseDouble(value.trim());
     }
 
 }
