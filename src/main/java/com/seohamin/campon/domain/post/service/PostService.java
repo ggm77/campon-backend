@@ -46,14 +46,19 @@ public class PostService {
             throw new CustomException(ExceptionCode.INVALID_REQUEST);
         }
 
-        // 2) 파싱
+        // 2) 게시글 길이 검사
+        if (postRequestDto.title().length() > 100 || postRequestDto.content().length() > 2048) {
+            throw new CustomException(ExceptionCode.TOO_LONG_CONTENT);
+        }
+
+        // 3) 파싱
         final Long userId = Long.parseLong(userIdStr);
 
-        // 3) 유저 조회
+        // 4) 유저 조회
         final User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
 
-        // 4) 게시물 객체 생성
+        // 5) 게시물 객체 생성
         final Post post = Post.builder()
                 .author(user)
                 .campsiteId(postRequestDto.campsiteId())
@@ -61,7 +66,7 @@ public class PostService {
                 .content(postRequestDto.content())
                 .build();
 
-        // 5) 저장
+        // 6) 저장
         final Post savedPost = postRepository.save(post);
 
         return PostResponseDto.of(savedPost);
@@ -165,10 +170,16 @@ public class PostService {
         }
 
         if (postRequestDto.title() != null && !postRequestDto.title().isBlank()) {
+            if (postRequestDto.title().length() > 100) {
+                throw new CustomException(ExceptionCode.TOO_LONG_CONTENT);
+            }
             post.updateTitle(postRequestDto.title());
         }
 
         if (postRequestDto.content() != null && !postRequestDto.content().isBlank()) {
+            if (postRequestDto.content().length() > 2048) {
+                throw new CustomException(ExceptionCode.TOO_LONG_CONTENT);
+            }
             post.updateContent(postRequestDto.content());
         }
 
@@ -180,6 +191,7 @@ public class PostService {
      * @param userIdStr 요청 유저 id
      * @param postId 삭제할 게시글 id
      */
+    @Transactional
     public void deletePost(
             final String userIdStr,
             final Long postId

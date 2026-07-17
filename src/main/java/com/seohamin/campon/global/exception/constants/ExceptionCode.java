@@ -19,6 +19,7 @@ public enum ExceptionCode {
     INVALID_MAX_DISTANCE(HttpStatus.BAD_REQUEST, "올바르지 않은 최대 거리입니다."),
     INVALID_PROVIDER(HttpStatus.BAD_REQUEST, "잘못된 OAuth provider입니다."),
     POST_NOT_EXIST(HttpStatus.BAD_REQUEST, "게시글이 존재하지 않습니다."),
+    TOO_LONG_CONTENT(HttpStatus.BAD_REQUEST, "제목 또는 본문이 너무 깁니다."),
 
 
     AUTHENTICATION_ERROR(HttpStatus.UNAUTHORIZED, "인증 되지 않았습니다."),
