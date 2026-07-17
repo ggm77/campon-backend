@@ -1,5 +1,6 @@
 package com.seohamin.campon.domain.user.entity;
 
+import com.seohamin.campon.domain.post.entity.Post;
 import com.seohamin.campon.global.constant.Equipment;
 import com.seohamin.campon.global.constant.Facility;
 import com.seohamin.campon.global.constant.Role;
@@ -33,6 +34,10 @@ public class User {
     // 연결된 OAuth2
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserOauth> userOauths = new ArrayList<>();
+
+    // 작성한 게시글
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts = new ArrayList<>();
 
     // 유저 Role
     @Enumerated(EnumType.STRING)
