@@ -3,13 +3,16 @@ package com.seohamin.campon.domain.user.service;
 import com.seohamin.campon.domain.user.dto.UserRequestDto;
 import com.seohamin.campon.domain.user.dto.UserResponseDto;
 import com.seohamin.campon.domain.user.entity.User;
+import com.seohamin.campon.domain.user.entity.UserOauth;
 import com.seohamin.campon.domain.user.repository.UserRepository;
+import com.seohamin.campon.global.auth.apple.client.AppleAuthClient;
 import com.seohamin.campon.global.constant.Equipment;
 import com.seohamin.campon.global.constant.Facility;
 import com.seohamin.campon.global.exception.CustomException;
 import com.seohamin.campon.global.exception.constants.ExceptionCode;
 import com.seohamin.campon.global.util.EnumUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +20,13 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
+    private static final String APPLE_PROVIDER = "apple";
+
     private final UserRepository userRepository;
+    private final AppleAuthClient appleAuthClient;
 
     /**
      * 유저 upsert 하는 메서드
@@ -97,8 +104,23 @@ public class UserService {
         // 2) 유저 아이디 파싱
         final Long userId = Long.valueOf(userIdStr);
 
-        // 3) 유저 삭제
-        userRepository.deleteById(userId);
+        // 3) 유저 조회
+        final User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_EXIST));
+
+        // 4) 연결된 Apple 계정이 있으면 토큰 revoke 요청
+        for (final UserOauth userOauth : user.getUserOauths()) {
+            if (APPLE_PROVIDER.equals(userOauth.getProvider()) && userOauth.getRefreshToken() != null) {
+                try {
+                    appleAuthClient.revokeToken(userOauth.getRefreshToken());
+                } catch (final Exception e) {
+                    log.error("Apple token revoke 실패. userId={}", userId, e);
+                }
+            }
+        }
+
+        // 5) 유저 삭제
+        userRepository.delete(user);
     }
 
     /**
