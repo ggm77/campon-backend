@@ -17,6 +17,9 @@ public class WebClientConfig {
     @Value("${gemini.api.base_url}")
     private String GEMINI_API_BASE_URL;
 
+    @Value("${kakao_mobility.base_url}")
+    private String KAKAO_MOBILITY_BASE_URL;
+
     @Value("${oauth2.kakao.auth_base_url}")
     private String KAKAO_AUTH_BASE_URL;
 
@@ -55,6 +58,13 @@ public class WebClientConfig {
     public WebClient geminiApiWebClient() {
         return WebClient.builder()
                 .baseUrl(GEMINI_API_BASE_URL)
+                .build();
+    }
+
+    @Bean
+    public WebClient kakaoMobilityWebClient() {
+        return WebClient.builder()
+                .baseUrl(KAKAO_MOBILITY_BASE_URL)
                 .build();
     }
 }

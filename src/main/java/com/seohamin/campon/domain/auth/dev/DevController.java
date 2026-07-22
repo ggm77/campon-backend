@@ -6,6 +6,8 @@ import com.seohamin.campon.global.auth.jwt.JwtProvider;
 import com.seohamin.campon.global.constant.Role;
 import com.seohamin.campon.global.dto.JwtDto;
 import com.seohamin.campon.global.infra.gemini.GeminiClient;
+import com.seohamin.campon.global.infra.kakaoMobility.KakaoMobilityClient;
+import com.seohamin.campon.global.infra.kakaoMobility.dto.KakaoDirectionsApiResponseDto;
 import com.seohamin.campon.global.infra.tourApi.TourApiClient;
 import com.seohamin.campon.global.infra.tourApi.dto.NearbyApiResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class DevController {
     private final UserRepository userRepository;
     private final TourApiClient tourApiClient;
     private final GeminiClient geminiClient;
+    private final KakaoMobilityClient kakaoMobilityClient;
 
     @GetMapping("/dev/token")
     public ResponseEntity<JwtDto> getDevToken(
@@ -64,5 +67,12 @@ public class DevController {
             @RequestParam final String message
     ) {
         return ResponseEntity.ok(geminiClient.chat(message));
+    }
+
+    @GetMapping("/dev/kakaoMobilityTest")
+    public ResponseEntity<KakaoDirectionsApiResponseDto> kakaoMobilityTest() {
+
+        // 서울시청 -> 강남역
+        return ResponseEntity.ok(kakaoMobilityClient.getCarDirections(126.9784, 37.5665, 127.0276, 37.4979, null));
     }
 }

@@ -20,6 +20,7 @@ public enum ExceptionCode {
     INVALID_PROVIDER(HttpStatus.BAD_REQUEST, "잘못된 OAuth provider입니다."),
     POST_NOT_EXIST(HttpStatus.BAD_REQUEST, "게시글이 존재하지 않습니다."),
     TOO_LONG_CONTENT(HttpStatus.BAD_REQUEST, "제목 또는 본문이 너무 깁니다."),
+    ROUTE_NOT_FOUND(HttpStatus.BAD_REQUEST, "요청한 두 지점 사이의 경로를 찾을 수 없습니다."),
 
 
     AUTHENTICATION_ERROR(HttpStatus.UNAUTHORIZED, "인증 되지 않았습니다."),
@@ -32,6 +33,7 @@ public enum ExceptionCode {
 
     GOOGLE_REQUEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "구글과 통신 중 오류가 발생했습니다."),
     KAKAO_REQUEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "카카오와 통신 중 오류가 발생했습니다."),
+    KAKAO_MOBILITY_REQUEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "카카오모빌리티와 통신 중 오류가 발생했습니다."),
     SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "현재 서버를 이용할 수 없습니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에서 오류가 발생했습니다.")
     ;
